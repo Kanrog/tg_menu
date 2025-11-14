@@ -82,7 +82,7 @@
         }
 
         .allergens::before {
-            content: "⚠️ Allergens: ";
+            content: "⚠️ Allergenen: ";
         }
 
         .loading {
@@ -91,18 +91,6 @@
             font-size: 2em;
             margin-top: 100px;
             grid-column: 1 / -1;
-        }
-
-        .debug-info {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            color: var(--accent-color);
-            max-width: 300px;
         }
 
         @media (max-width: 1200px) {
@@ -116,16 +104,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>Today's Menu</h1>
+            <h1>Menu van de Dag</h1>
         </header>
         
         <div class="menu-grid">
-            <div class="loading">Loading menu...</div>
+            <div class="loading">Menu laden...</div>
         </div>
     </div>
-
-    <!-- Debug info (remove this once working) -->
-    <div id="debug" class="debug-info" style="display: none;"></div>
 
     <script>
         // CONFIGURATION - CHANGE THESE VALUES
@@ -133,47 +118,32 @@
         const SHEET_NAME = 'Sheet1';
 
         // Construct the Google Sheets JSON API URL
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
-        function debug(message) {
-            console.log(message);
-            const debugEl = document.getElementById('debug');
-            debugEl.style.display = 'block';
-            debugEl.innerHTML += message + '<br>';
-        }
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out=json&sheet=${SHEET_NAME}`;
 
         async function loadMenu() {
             try {
-                debug('Fetching data...');
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
                 
-                debug('Parsing data...');
                 const json = JSON.parse(text.substring(47).slice(0, -2));
                 
                 const rows = json.table.rows;
-                debug(`Found ${rows.length} rows total`);
                 
-                // Get highlight day from cell H1 (column index 7, row index 0 - FIRST ROW)
+                // Get highlight day from cell H1 (column index 7, row index 0)
                 let highlightDay = 1; // Default
                 
                 if (rows.length > 0 && rows[0].c && rows[0].c.length > 7) {
                     if (rows[0].c[7] && rows[0].c[7].v !== null && rows[0].c[7].v !== undefined) {
                         highlightDay = parseInt(rows[0].c[7].v);
-                        debug(`Highlight day from H1: ${highlightDay}`);
-                    } else {
-                        debug('No highlight day found in H1, using default: 1');
                     }
                 }
                 
-                // Get menu items - check EVERY row including the first one
+                // Get menu items
                 const menuItems = [];
                 
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    debug(`Checking row ${i + 1}: ${row.c && row.c[0] ? row.c[0].v : 'empty'}`);
                     
-                    // Only add if it has a numeric day value (not "Day" header text)
                     if (row.c && row.c[0] && row.c[0].v && !isNaN(row.c[0].v)) {
                         const item = {
                             day: row.c[0].v,
@@ -182,37 +152,38 @@
                             allergens: row.c[3]?.v || ''
                         };
                         menuItems.push(item);
-                        debug(`Added: Day $${item.day} -$$ {item.dish}`);
                     }
                 }
 
-                debug(`Found ${menuItems.length} menu items`);
                 displayMenu(menuItems, highlightDay);
             } catch (error) {
                 const container = document.querySelector('.menu-grid');
                 container.innerHTML = 
-                    '<div class="loading" style="color: #ff6b6b;">Error loading menu. Check console for details.</div>';
+                    '<div class="loading" style="color: #ff6b6b;">Fout bij het laden van het menu.</div>';
                 console.error('Error:', error);
-                debug('ERROR: ' + error.message);
             }
         }
 
         function displayMenu(items, highlightDay) {
-            debug(`Displaying $${items.length} items, highlighting day$$ {highlightDay}`);
             const container = document.querySelector('.menu-grid');
             container.innerHTML = '';
 
-            items.forEach(item => {
+            // Dutch days of the week
+            const daysOfWeek = ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag', 'Maandag'];
+
+            items.forEach(function(item) {
                 const menuItem = document.createElement('div');
                 menuItem.className = 'menu-item';
                 
                 if (parseInt(item.day) === highlightDay) {
                     menuItem.classList.add('highlighted');
-                    debug(`✓ Highlighted day ${item.day}`);
                 }
 
+                const dayIndex = parseInt(item.day) - 1;
+                const dayName = daysOfWeek[dayIndex] || 'Dag ' + item.day;
+
                 menuItem.innerHTML = `
-                    <div class="day-label">Day ${item.day}</div>
+                    <div class="day-label">${dayName}</div>
                     <div class="dish-name">${item.dish}</div>
                     <div class="ingredients">${item.ingredients}</div>
                     <div class="allergens">${item.allergens}</div>
@@ -228,6 +199,5 @@
         // Refresh every 5 minutes
         setInterval(loadMenu, 300000);
     </script>
-
 </body>
 </html>
