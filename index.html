@@ -8,8 +8,9 @@
     <style>
         /* Menu-specific overrides and additions */
         body {
-            padding: 15px;
+            padding: 10px;
             overflow: hidden;
+            margin: 0;
         }
 
         .container {
@@ -17,6 +18,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: 5px;
         }
 
         header {
@@ -25,70 +27,73 @@
 
         header h1 {
             border-bottom: 4px solid var(--accent-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            font-size: 2.3em;
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            gap: 15px;
+            gap: 12px;
             flex: 1;
             overflow: hidden;
+            padding: 5px;
         }
 
         .menu-item {
             background-color: var(--card-bg);
             border: 3px solid #4a4a4a;
             border-radius: 10px;
-            padding: 20px;
+            padding: 18px;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            margin: 3px;
         }
 
         .menu-item.highlighted {
             border: 4px solid var(--primary-color);
             background-color: #3a3a3a;
             box-shadow: 0 0 20px rgba(234, 123, 49, 0.5);
-            transform: scale(1.02);
+            transform: scale(1.01);
+            margin: 2px;
         }
 
         .day-label {
             color: var(--accent-color);
-            font-size: 0.9em;
+            font-size: 0.85em;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .dish-name {
             color: var(--primary-color);
-            font-size: 1.5em;
+            font-size: 1.4em;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 9px;
             line-height: 1.2;
         }
 
         .ingredients {
             color: #e0e0e0;
-            font-size: 0.95em;
-            margin-bottom: 8px;
+            font-size: 0.9em;
+            margin-bottom: 7px;
             line-height: 1.4;
         }
 
         .allergens {
             color: #ff6b6b;
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: bold;
             margin-top: auto;
-            padding-top: 8px;
+            padding-top: 7px;
             border-top: 2px solid var(--accent-color);
         }
 
