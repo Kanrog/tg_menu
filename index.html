@@ -115,6 +115,60 @@
                 grid-template-rows: repeat(8, 1fr);
             }
         }
+                /* Phone and Tablet Responsive Design */
+        @media (max-width: 1200px) {
+            body {
+                padding: 15px;
+                overflow: auto;
+            }
+
+            .container {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                gap: 20px;
+                overflow: visible;
+            }
+
+            .menu-item {
+                padding: 25px;
+                margin: 0;
+            }
+
+            .day-label {
+                font-size: 1em;
+            }
+
+            .dish-name {
+                font-size: 1.6em;
+            }
+
+            .ingredients {
+                font-size: 1em;
+            }
+
+            .allergens {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .dish-name {
+                font-size: 1.4em;
+            }
+        }
     </style>
 </head>
 <body>
