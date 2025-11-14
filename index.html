@@ -130,7 +130,7 @@
     <script>
         // CONFIGURATION - CHANGE THESE VALUES
         const SHEET_ID = '1JSX9yUnFdBCb2rKLJK4B_shvoQvdN5srHOHRUv-gO7o';
-        const SHEET_NAME = 'Sheet1'; // Change if your sheet tab has a different name
+        const SHEET_NAME = 'Sheet1';
 
         // Construct the Google Sheets JSON API URL
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
@@ -149,39 +149,40 @@
                 const text = await response.text();
                 
                 debug('Parsing data...');
-                // Google Sheets returns JSONP, need to extract JSON
                 const json = JSON.parse(text.substring(47).slice(0, -2));
                 
                 const rows = json.table.rows;
-                debug(`Found ${rows.length} rows`);
+                debug(`Found ${rows.length} rows total`);
                 
-                // Get highlight day from cell H2 (column index 7, row index 1)
+                // Get highlight day from cell H1 (column index 7, row index 0 - FIRST ROW)
                 let highlightDay = 1; // Default
                 
-                // Check if H2 exists and has a value
-                if (rows.length > 1 && rows[1].c) {
-                    debug(`Row 2 has ${rows[1].c.length} columns`);
-                    
-                    // Try to get value from column F (index 5)
-                    if (rows[1].c.length > 7 && rows[1].c[7] && rows[1].c[7].v !== null) {
-                        highlightDay = parseInt(rows[1].c[7].v);
-                        debug(`Highlight day from sheet: ${highlightDay}`);
+                if (rows.length > 0 && rows[0].c && rows[0].c.length > 7) {
+                    if (rows[0].c[7] && rows[0].c[7].v !== null && rows[0].c[7].v !== undefined) {
+                        highlightDay = parseInt(rows[0].c[7].v);
+                        debug(`Highlight day from H1: ${highlightDay}`);
                     } else {
-                        debug('No highlight day found in H2, using default: 1');
+                        debug('No highlight day found in H1, using default: 1');
                     }
                 }
                 
-                // Get menu items from columns A-D
+                // Get menu items - check EVERY row including the first one
                 const menuItems = [];
-                for (let i = 1; i < rows.length; i++) {
+                
+                for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    if (row.c && row.c[0] && row.c[0].v) {
-                        menuItems.push({
-                            day: row.c[0]?.v || '',
+                    debug(`Checking row ${i + 1}: ${row.c && row.c[0] ? row.c[0].v : 'empty'}`);
+                    
+                    // Only add if it has a numeric day value (not "Day" header text)
+                    if (row.c && row.c[0] && row.c[0].v && !isNaN(row.c[0].v)) {
+                        const item = {
+                            day: row.c[0].v,
                             dish: row.c[1]?.v || '',
                             ingredients: row.c[2]?.v || '',
                             allergens: row.c[3]?.v || ''
-                        });
+                        };
+                        menuItems.push(item);
+                        debug(`Added: Day $${item.day} -$$ {item.dish}`);
                     }
                 }
 
@@ -197,7 +198,7 @@
         }
 
         function displayMenu(items, highlightDay) {
-            debug(`Displaying menu, highlighting day ${highlightDay}`);
+            debug(`Displaying $${items.length} items, highlighting day$$ {highlightDay}`);
             const container = document.querySelector('.menu-grid');
             container.innerHTML = '';
 
@@ -207,7 +208,7 @@
                 
                 if (parseInt(item.day) === highlightDay) {
                     menuItem.classList.add('highlighted');
-                    debug(`Highlighted day ${item.day}`);
+                    debug(`✓ Highlighted day ${item.day}`);
                 }
 
                 menuItem.innerHTML = `
@@ -224,8 +225,9 @@
         // Load menu on page load
         loadMenu();
 
-        // Refresh every 5 minutes to catch any sheet updates
+        // Refresh every 5 minutes
         setInterval(loadMenu, 300000);
     </script>
+
 </body>
 </html>
