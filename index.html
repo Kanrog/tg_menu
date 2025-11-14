@@ -104,7 +104,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Today's Menu</h1>
+            <h1>TG26 Meny</h1>
         </header>
         
         <div class="menu-grid">
@@ -116,10 +116,10 @@
         // CONFIGURATION - CHANGE THESE VALUES
         const SHEET_ID = '1JSX9yUnFdBCb2rKLJK4B_shvoQvdN5srHOHRUv-gO7o';
         const SHEET_NAME = 'Sheet1'; // Change if your sheet tab has a different name
-        const HIGHLIGHT_DAY = 1; // Change this to highlight a specific day (1-8)
+        const HIGHLIGHT_DAY = 4; // Change this to highlight a specific day (1-8)
 
         // Construct the Google Sheets JSON API URL
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/1JSX9yUnFdBCb2rKLJK4B_shvoQvdN5srHOHRUv-gO7o/edit?usp=sharing`;
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
         async function loadMenu() {
             try {
