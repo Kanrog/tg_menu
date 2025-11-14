@@ -155,19 +155,19 @@
                 const rows = json.table.rows;
                 debug(`Found ${rows.length} rows`);
                 
-                // Get highlight day from cell F2 (column index 5, row index 1)
+                // Get highlight day from cell H2 (column index 7, row index 1)
                 let highlightDay = 1; // Default
                 
-                // Check if F2 exists and has a value
+                // Check if H2 exists and has a value
                 if (rows.length > 1 && rows[1].c) {
                     debug(`Row 2 has ${rows[1].c.length} columns`);
                     
                     // Try to get value from column F (index 5)
-                    if (rows[1].c.length > 5 && rows[1].c[5] && rows[1].c[5].v !== null) {
-                        highlightDay = parseInt(rows[1].c[5].v);
+                    if (rows[1].c.length > 7 && rows[1].c[7] && rows[1].c[7].v !== null) {
+                        highlightDay = parseInt(rows[1].c[7].v);
                         debug(`Highlight day from sheet: ${highlightDay}`);
                     } else {
-                        debug('No highlight day found in F2, using default: 1');
+                        debug('No highlight day found in H2, using default: 1');
                     }
                 }
                 
