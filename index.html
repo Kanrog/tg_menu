@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TG26 Meny</title>
+    <title>Cafe Menu</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         /* Menu-specific overrides and additions */
@@ -93,6 +93,18 @@
             grid-column: 1 / -1;
         }
 
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            color: var(--accent-color);
+            max-width: 300px;
+        }
+
         @media (max-width: 1200px) {
             .menu-grid {
                 grid-template-columns: 1fr;
@@ -104,13 +116,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>TG26 Meny</h1>
+            <h1>Today's Menu</h1>
         </header>
         
         <div class="menu-grid">
             <div class="loading">Loading menu...</div>
         </div>
     </div>
+
+    <!-- Debug info (remove this once working) -->
+    <div id="debug" class="debug-info" style="display: none;"></div>
 
     <script>
         // CONFIGURATION - CHANGE THESE VALUES
@@ -120,42 +135,69 @@
         // Construct the Google Sheets JSON API URL
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
+        function debug(message) {
+            console.log(message);
+            const debugEl = document.getElementById('debug');
+            debugEl.style.display = 'block';
+            debugEl.innerHTML += message + '<br>';
+        }
+
         async function loadMenu() {
             try {
+                debug('Fetching data...');
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
                 
+                debug('Parsing data...');
                 // Google Sheets returns JSONP, need to extract JSON
                 const json = JSON.parse(text.substring(47).slice(0, -2));
                 
                 const rows = json.table.rows;
+                debug(`Found ${rows.length} rows`);
                 
                 // Get highlight day from cell F2 (column index 5, row index 1)
                 let highlightDay = 1; // Default
-                if (rows[1] && rows[1].c[5] && rows[1].c[5].v) {
-                    highlightDay = parseInt(rows[1].c[5].v);
+                
+                // Check if F2 exists and has a value
+                if (rows.length > 1 && rows[1].c) {
+                    debug(`Row 2 has ${rows[1].c.length} columns`);
+                    
+                    // Try to get value from column F (index 5)
+                    if (rows[1].c.length > 5 && rows[1].c[5] && rows[1].c[5].v !== null) {
+                        highlightDay = parseInt(rows[1].c[5].v);
+                        debug(`Highlight day from sheet: ${highlightDay}`);
+                    } else {
+                        debug('No highlight day found in F2, using default: 1');
+                    }
                 }
                 
                 // Get menu items from columns A-D
-                const menuItems = rows.slice(1) // Skip header row
-                    .filter(row => row.c && row.c[0] && row.c[0].v) // Filter empty rows and check if Day column has value
-                    .map(row => ({
-                        day: row.c[0]?.v || '',
-                        dish: row.c[1]?.v || '',
-                        ingredients: row.c[2]?.v || '',
-                        allergens: row.c[3]?.v || ''
-                    }));
+                const menuItems = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (row.c && row.c[0] && row.c[0].v) {
+                        menuItems.push({
+                            day: row.c[0]?.v || '',
+                            dish: row.c[1]?.v || '',
+                            ingredients: row.c[2]?.v || '',
+                            allergens: row.c[3]?.v || ''
+                        });
+                    }
+                }
 
+                debug(`Found ${menuItems.length} menu items`);
                 displayMenu(menuItems, highlightDay);
             } catch (error) {
                 const container = document.querySelector('.menu-grid');
                 container.innerHTML = 
-                    '<div class="loading" style="color: #ff6b6b;">Error loading menu. Please check your Sheet ID and permissions.</div>';
+                    '<div class="loading" style="color: #ff6b6b;">Error loading menu. Check console for details.</div>';
                 console.error('Error:', error);
+                debug('ERROR: ' + error.message);
             }
         }
 
         function displayMenu(items, highlightDay) {
+            debug(`Displaying menu, highlighting day ${highlightDay}`);
             const container = document.querySelector('.menu-grid');
             container.innerHTML = '';
 
@@ -165,6 +207,7 @@
                 
                 if (parseInt(item.day) === highlightDay) {
                     menuItem.classList.add('highlighted');
+                    debug(`Highlighted day ${item.day}`);
                 }
 
                 menuItem.innerHTML = `
@@ -184,6 +227,5 @@
         // Refresh every 5 minutes to catch any sheet updates
         setInterval(loadMenu, 300000);
     </script>
-
 </body>
 </html>
