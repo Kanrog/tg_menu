@@ -116,7 +116,6 @@
         // CONFIGURATION - CHANGE THESE VALUES
         const SHEET_ID = '1JSX9yUnFdBCb2rKLJK4B_shvoQvdN5srHOHRUv-gO7o';
         const SHEET_NAME = 'Sheet1'; // Change if your sheet tab has a different name
-        const HIGHLIGHT_DAY = 4; // Change this to highlight a specific day (1-8)
 
         // Construct the Google Sheets JSON API URL
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
@@ -130,8 +129,16 @@
                 const json = JSON.parse(text.substring(47).slice(0, -2));
                 
                 const rows = json.table.rows;
+                
+                // Get highlight day from cell F2 (column index 5, row index 1)
+                let highlightDay = 1; // Default
+                if (rows[1] && rows[1].c[5] && rows[1].c[5].v) {
+                    highlightDay = parseInt(rows[1].c[5].v);
+                }
+                
+                // Get menu items from columns A-D
                 const menuItems = rows.slice(1) // Skip header row
-                    .filter(row => row.c && row.c[0]) // Filter empty rows
+                    .filter(row => row.c && row.c[0] && row.c[0].v) // Filter empty rows and check if Day column has value
                     .map(row => ({
                         day: row.c[0]?.v || '',
                         dish: row.c[1]?.v || '',
@@ -139,7 +146,7 @@
                         allergens: row.c[3]?.v || ''
                     }));
 
-                displayMenu(menuItems);
+                displayMenu(menuItems, highlightDay);
             } catch (error) {
                 const container = document.querySelector('.menu-grid');
                 container.innerHTML = 
@@ -148,7 +155,7 @@
             }
         }
 
-        function displayMenu(items) {
+        function displayMenu(items, highlightDay) {
             const container = document.querySelector('.menu-grid');
             container.innerHTML = '';
 
@@ -156,7 +163,7 @@
                 const menuItem = document.createElement('div');
                 menuItem.className = 'menu-item';
                 
-                if (parseInt(item.day) === HIGHLIGHT_DAY) {
+                if (parseInt(item.day) === highlightDay) {
                     menuItem.classList.add('highlighted');
                 }
 
@@ -177,5 +184,6 @@
         // Refresh every 5 minutes to catch any sheet updates
         setInterval(loadMenu, 300000);
     </script>
+
 </body>
 </html>
