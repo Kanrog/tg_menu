@@ -169,12 +169,37 @@
                 font-size: 1.4em;
             }
         }
+        /* Simple flag language switcher */
+header { position: relative; } /* styles.css already sets this, but safe to ensure */
+.lang-flag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.6rem;
+    line-height: 1;
+    text-decoration: none;
+    padding: 6px 8px; /* small tap/click target */
+    transition: transform 0.2s ease;
+}
+.lang-flag:hover { transform: scale(1.08); }
+
+/* On small screens, put the flag below the title, centered */
+@media (max-width: 768px) {
+    .lang-flag {
+        position: static;
+        display: block;
+        width: max-content;
+        margin: 10px auto 0;
+    }
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>TG26 Frivilligpleie Meny</h1>
+            <a href="https://kanrog.github.io/tg_menu/en" class="lang-flag" aria-label="View in English">🇬🇧</a>
         </header>
         
         <div class="menu-grid">
