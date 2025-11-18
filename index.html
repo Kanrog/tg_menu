@@ -169,8 +169,11 @@
                 font-size: 1.4em;
             }
         }
-/* Simple flag language switcher */
-header { position: relative; }
+/* Language switcher flags */
+header { 
+    position: relative; 
+}
+
 .lang-flag {
     position: absolute;
     top: 0;
@@ -182,16 +185,33 @@ header { position: relative; }
     transition: transform 0.2s ease;
     font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
-.lang-flag:hover { transform: scale(1.15); }
+
+/* Position multiple flags horizontally */
+.lang-flag:nth-of-type(2) {
+    right: 60px; /* Move second flag left */
+}
+
+.lang-flag:nth-of-type(3) {
+    right: 120px; /* Move third flag further left */
+}
+
+.lang-flag:hover { 
+    transform: scale(1.15); 
+}
 
 @media (max-width: 768px) {
     .lang-flag {
         position: static;
-        display: block;
-        width: max-content;
-        margin: 10px auto 0;
+        display: inline-block;
+        margin: 10px 5px 0;
+    }
+    
+    .lang-flag:nth-of-type(2),
+    .lang-flag:nth-of-type(3) {
+        right: auto;
     }
 }
+
 }
 
     </style>
