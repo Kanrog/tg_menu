@@ -7,3 +7,5 @@ TG26 crewcare menu
     </a>
   </p>
   
+Sheet:
+https://docs.google.com/spreadsheets/d/1JSX9yUnFdBCb2rKLJK4B_shvoQvdN5srHOHRUv-gO7o/edit?usp=sharing
