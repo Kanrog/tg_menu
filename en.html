@@ -289,8 +289,16 @@ function displayMenu(items, highlightDay) {
     const container = document.querySelector('.menu-grid');
     container.innerHTML = '';
 
-    // Reordered to start with Sunday at index 0
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    // Norwegian version logic: Sunday is Day 7 in the sheet, 
+    // but we want it to be Index 0 for display.
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    // 1. SORTING: This moves Day 7 (Sunday) to the front of the list
+    items.sort((a, b) => {
+        const dayA = parseInt(a.day) === 7 ? 0 : parseInt(a.day);
+        const dayB = parseInt(b.day) === 7 ? 0 : parseInt(b.day);
+        return dayA - dayB;
+    });
 
     items.forEach(item => {
         const menuItem = document.createElement('div');
@@ -300,7 +308,7 @@ function displayMenu(items, highlightDay) {
             menuItem.classList.add('highlighted');
         }
 
-        // Logic remains the same: Day 1 maps to Index 0 (Sunday)
+        // 2. INDEXING: Map the day number to the correct name
         const dayIndex = parseInt(item.day) - 1;
         const dayName = daysOfWeek[dayIndex] || ('Day ' + item.day);
 
