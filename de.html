@@ -285,33 +285,40 @@ header {
             }
         }
 
-        function displayMenu(items, highlightDay) {
-            const container = document.querySelector('.menu-grid');
-            container.innerHTML = '';
+function displayMenu(items, highlightDay) {
+    const container = document.querySelector('.menu-grid');
+    container.innerHTML = '';
 
-            const daysOfWeek = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag', 'Montag'];
+    // German days of the week
+    const daysOfWeek = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
+    // SORTING: This treats Day 7 (Sonntag) as 0 so it moves to the top/start
+    items.sort((a, b) => {
+        const dayA = parseInt(a.day) === 7 ? 0 : parseInt(a.day);
+        const dayB = parseInt(b.day) === 7 ? 0 : parseInt(b.day);
+        return dayA - dayB;
+    });
 
-            items.forEach(item => {
-                const menuItem = document.createElement('div');
-                menuItem.className = 'menu-item';
-                if (parseInt(item.day) === highlightDay) {
-                    menuItem.classList.add('highlighted');
-                }
-
-                const dayIndex = parseInt(item.day) - 1;
-                const dayName = daysOfWeek[dayIndex] || ('Day ' + item.day);
-
-                menuItem.innerHTML = `
-                    <div class="day-label">${dayName}</div>
-                    <div class="dish-name">${item.dish}</div>
-                    <div class="ingredients">${item.ingredients}</div>
-                    <div class="allergens">${item.allergens}</div>
-                `;
-                container.appendChild(menuItem);
-            });
+    items.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        
+        if (parseInt(item.day) === highlightDay) {
+            menuItem.classList.add('highlighted');
         }
 
+        const dayIndex = parseInt(item.day) - 1;
+        const dayName = daysOfWeek[dayIndex] || ('Tag ' + item.day);
+
+        menuItem.innerHTML = `
+            <div class="day-label">${dayName}</div>
+            <div class="dish-name">${item.dish}</div>
+            <div class="ingredients">${item.ingredients}</div>
+            <div class="allergens">${item.allergens}</div>
+        `;
+        container.appendChild(menuItem);
+    });
+}
         // Load menu on page load
         loadMenu();
 
