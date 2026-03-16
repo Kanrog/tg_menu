@@ -285,32 +285,34 @@ header {
             }
         }
 
-        function displayMenu(items, highlightDay) {
-            const container = document.querySelector('.menu-grid');
-            container.innerHTML = '';
+function displayMenu(items, highlightDay) {
+    const container = document.querySelector('.menu-grid');
+    container.innerHTML = '';
 
-            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday'];
+    // Reordered to start with Sunday at index 0
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-            items.forEach(item => {
-                const menuItem = document.createElement('div');
-                menuItem.className = 'menu-item';
-                if (parseInt(item.day) === highlightDay) {
-                    menuItem.classList.add('highlighted');
-                }
-
-                const dayIndex = parseInt(item.day) - 1;
-                const dayName = daysOfWeek[dayIndex] || ('Day ' + item.day);
-
-                menuItem.innerHTML = `
-                    <div class="day-label">${dayName}</div>
-                    <div class="dish-name">${item.dish}</div>
-                    <div class="ingredients">${item.ingredients}</div>
-                    <div class="allergens">${item.allergens}</div>
-                `;
-                container.appendChild(menuItem);
-            });
+    items.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        
+        if (parseInt(item.day) === highlightDay) {
+            menuItem.classList.add('highlighted');
         }
 
+        // Logic remains the same: Day 1 maps to Index 0 (Sunday)
+        const dayIndex = parseInt(item.day) - 1;
+        const dayName = daysOfWeek[dayIndex] || ('Day ' + item.day);
+
+        menuItem.innerHTML = `
+            <div class="day-label">${dayName}</div>
+            <div class="dish-name">${item.dish}</div>
+            <div class="ingredients">${item.ingredients}</div>
+            <div class="allergens">${item.allergens}</div>
+        `;
+        container.appendChild(menuItem);
+    });
+}
         // Load menu on page load
         loadMenu();
 
