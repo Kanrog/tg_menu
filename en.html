@@ -291,7 +291,7 @@ function displayMenu(items, highlightDay) {
 
     // Norwegian version logic: Sunday is Day 7 in the sheet, 
     // but we want it to be Index 0 for display.
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const daysOfWeek = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     // 1. SORTING: This moves Day 7 (Sunday) to the front of the list
     items.sort((a, b) => {
@@ -310,8 +310,8 @@ function displayMenu(items, highlightDay) {
 
         // 2. INDEXING: Map the day number to the correct name
         const dayIndex = parseInt(item.day) - 1;
-        const dayName = daysOfWeek[dayIndex] || ('Day ' + item.day);
-
+        const dayName = daysOfWeek[parseInt(item.day)] || ('Day ' + item.day);
+        
         menuItem.innerHTML = `
             <div class="day-label">${dayName}</div>
             <div class="dish-name">${item.dish}</div>
