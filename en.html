@@ -293,13 +293,6 @@ function displayMenu(items, highlightDay) {
     // but we want it to be Index 0 for display.
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    // 1. SORTING: This moves Day 7 (Sunday) to the front of the list
-    items.sort((a, b) => {
-        const dayA = parseInt(a.day) === 7 ? 0 : parseInt(a.day);
-        const dayB = parseInt(b.day) === 7 ? 0 : parseInt(b.day);
-        return dayA - dayB;
-    });
-
     items.forEach(item => {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
