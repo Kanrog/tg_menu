@@ -290,14 +290,7 @@ function displayMenu(items, highlightDay) {
     container.innerHTML = '';
 
     // German days of the week
-    const daysOfWeek = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-
-    // SORTING: This treats Day 7 (Sonntag) as 0 so it moves to the top/start
-    items.sort((a, b) => {
-        const dayA = parseInt(a.day) === 7 ? 0 : parseInt(a.day);
-        const dayB = parseInt(b.day) === 7 ? 0 : parseInt(b.day);
-        return dayA - dayB;
-    });
+    const daysOfWeek = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
     items.forEach(item => {
         const menuItem = document.createElement('div');
